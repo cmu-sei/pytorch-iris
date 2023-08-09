@@ -1,4 +1,3 @@
-# Docker container for ESP use
 # Copyright 2023 Carnegie Mellon University.
 # MIT (SEI)
 # Permission is hereby granted, free of charge, to any person obtaining a

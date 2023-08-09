@@ -4,7 +4,7 @@ index f6c72ff..3140e64 100644
 +++ b/Makefile
 @@ -1,27 +1,65 @@
 -# Compile Torch model to LLVM
-+# Docker container for ESP use
++# 
 +# Copyright 2023 Carnegie Mellon University.
 +# MIT (SEI)
 +# Permission is hereby granted, free of charge, to any person obtaining a
