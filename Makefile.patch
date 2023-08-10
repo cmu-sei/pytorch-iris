@@ -101,7 +101,7 @@ index f6c72ff..3140e64 100644
 +# --memory-mapped-top and --generate-tb, --simulate
 +BAMBU_OPTS=
 +#BAMBU_OPTS+=--memory-mapped-top
-+#BAMBU_OPTS+= --generate-tb=../../forward_kernel_test.xml --simulate --simulator=VERILATOR
++BAMBU_OPTS+= --generate-tb=../../forward_kernel_test.xml --simulate --simulator=VERILATOR
 +BAMBU_OPTS+=--no-clean
 +
 +#BAMBU_OPTS+=--data-bus-bitsize=32 --addr-bus-bitsize=32
