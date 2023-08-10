@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # Copyright 2023 Carnegie Mellon University.
 # MIT (SEI)
 # Permission is hereby granted, free of charge, to any person obtaining a
@@ -27,6 +29,4 @@
 # Government use and distribution.
 # DM23-0186
 
-
-#!/bin/bash
 wget https://github.com/pnnl/soda-opt/raw/main/docs/tutorials/pytorch/matmul_accel_gen/docker-version/torchscript.py
