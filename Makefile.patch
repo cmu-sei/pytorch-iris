@@ -62,7 +62,7 @@ index f6c72ff..3140e64 100644
 +all : $(TARGET)
 +
 +torchscript.py :
-+	./torchscript.py.sh
++	wget https://github.com/pnnl/soda-opt/raw/main/docs/tutorials/pytorch/matmul_accel_gen/docker-version/torchscript.py
  
 -$(ODIR)/01_tosa.mlir: $(FILE_PATH) 
 +$(ODIR)/01_tosa.mlir: $(FILE_PATH)
