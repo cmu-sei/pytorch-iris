@@ -53,6 +53,12 @@ python infer.py
 
 # for use with soda-opt
 ```
+git clone git clone --recursive git@github.com:cmu-sei/soda-opt-docker.git
+cd soda-opt-docker
+docker build --rm --pull -f ./Dockerfile -t soda-opt:dev-panda .
+docker run --rm -it --network=host --privileged -e DISPLAY=$DISPLAY -e UID=$(id -u) -e GID=$(id -g) -v `pwd`/env:/home/soda-opt-user/env:rw -v `pwd`/work:/home/soda-opt-user/work soda-opt:dev-panda
+# in the container
+cd work/pytorch-iris/
 ./getmake.sh
 make synth-baseline
 ```
