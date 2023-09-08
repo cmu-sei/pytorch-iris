@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<module>
+ <function id="forward_kernel">
+  <arg id="P0" SizeInBytes="256" interface_type="array" interface_typename="float*" interface_typename_orig="float (*)" size="64" interface_typename_include=""/>
+  <arg id="P1" SizeInBytes="256" interface_type="array" interface_typename="float*" interface_typename_orig="float (*)" size="64" interface_typename_include=""/>
+  <arg id="P2" SizeInBytes="64" interface_type="array" interface_typename="float*" interface_typename_orig="float (*)" size="16" interface_typename_include=""/>
+ </function>

@@ -4,7 +4,7 @@ index f6c72ff..3140e64 100644
 +++ b/Makefile
 @@ -1,27 +1,65 @@
 -# Compile Torch model to LLVM
-+# 
++#
 +# Copyright 2023 Carnegie Mellon University.
 +# MIT (SEI)
 +# Permission is hereby granted, free of charge, to any person obtaining a
@@ -46,7 +46,7 @@ index f6c72ff..3140e64 100644
 +#DIALECT=torch
 +#DIALECT=raw
 +#DIALECT=mhlo # doesn't work
- 
+
 -FILE_PATH=torchscript.py
 -SCRIPTS_DIR=/opt/soda/scripts
 -# SCRIPTS_DIR=../../../../../../scripts
@@ -57,51 +57,51 @@ index f6c72ff..3140e64 100644
 -# Edit to change the target
  # TARGET=$(ODIR)/04_llvm.ll
  TARGET=$(ODIR)/04_llvm_baseline.mlir $(ODIR)/04_llvm_optimized.mlir
- 
+
 -all: $(TARGET)
 +all : $(TARGET)
 +
 +torchscript.py :
 +	wget https://github.com/pnnl/soda-opt/raw/main/docs/tutorials/pytorch/matmul_accel_gen/docker-version/torchscript.py
- 
--$(ODIR)/01_tosa.mlir: $(FILE_PATH) 
+
+-$(ODIR)/01_tosa.mlir: $(FILE_PATH)
 +$(ODIR)/01_tosa.mlir: $(FILE_PATH)
  	python $(FILE_PATH) $@ --dialect=tosa
- 
+
  $(ODIR)/02_linalg.mlir: $(ODIR)/01_tosa.mlir $(SCRIPTS_DIR)/tosa_to_linalg.sh
  	$(SCRIPTS_DIR)/tosa_to_linalg.sh $< $@
- 
+
  # Define here which operation to outline
--$(ODIR)/03-01_linalg_searched.mlir: $(ODIR)/02_linalg.mlir 
--	soda-opt $< -o $@ -convert-operation-to-soda="anchor-op=linalg.batch_matmul" 
+-$(ODIR)/03-01_linalg_searched.mlir: $(ODIR)/02_linalg.mlir
+-	soda-opt $< -o $@ -convert-operation-to-soda="anchor-op=linalg.batch_matmul"
 +$(ODIR)/03-01_linalg_searched.mlir: $(ODIR)/02_linalg.mlir
 +	soda-opt $< -o $@ -convert-operation-to-soda="anchor-op=linalg.batch_matmul"
 +#$(ODIR)/03-01_linalg_searched.mlir: $(ODIR)/02_linalg.mlir
 +#	soda-opt $< -o $@ -convert-all-to-soda
- 
+
  $(ODIR)/03-02_linalg_outlined.mlir: $(ODIR)/03-01_linalg_searched.mlir
  	soda-opt $< -o $@ -soda-outline-bambu-code -soda-extract-arguments-to-xml=using-bare-ptr
 @@ -29,7 +67,10 @@ $(ODIR)/03-02_linalg_outlined.mlir: $(ODIR)/03-01_linalg_searched.mlir
  	mv forward_kernel_test.xml $(ODIR)/forward_kernel_test.xml
- 
+
  $(ODIR)/03-03_linalg_isolated.mlir: $(ODIR)/03-02_linalg_outlined.mlir
--	soda-opt $< -o $@ -soda-generate-bambu-accelcode=no-aa 
+-	soda-opt $< -o $@ -soda-generate-bambu-accelcode=no-aa
 +	soda-opt $< -o $@ -soda-generate-bambu-accelcode=no-aa
 +
 +$(ODIR)/03-04_linalg_hostcode.mlir: $(ODIR)/03-02_linalg_outlined.mlir
 +	soda-opt $< -o $@ -soda-generate-bambu-hostcode
- 
+
  # =============================================================================
  # Rules specific to non-optimized Baseline
 @@ -39,22 +80,30 @@ $(ODIR)/04_llvm_baseline.mlir: $(ODIR)/03-03_linalg_isolated.mlir
  $(ODIR)/05_llvm_baseline.ll: $(ODIR)/04_llvm_baseline.mlir
  	mlir-translate $< -o $@ --mlir-to-llvmir -opaque-pointers=0
- 
+
 +# current version of bambu doesn't concurrently support
 +# --memory-mapped-top and --generate-tb, --simulate
 +BAMBU_OPTS=
 +#BAMBU_OPTS+= --memory-mapped-top
-+BAMBU_OPTS+= --generate-tb=../../forward_kernel_test.xml --simulate --simulator=VERILATOR
++BAMBU_OPTS+= --generate-tb=../../forward_kernel_test.xml --interface-xml-filename=../../forward_kernel_interface.xml --simulate --simulator=VERILATOR
 +BAMBU_OPTS+= --no-clean
 +
 +#BAMBU_OPTS+= --data-bus-bitsize=32 --addr-bus-bitsize=32
@@ -126,7 +126,7 @@ index f6c72ff..3140e64 100644
  		--top-fname=forward_kernel \
 +                $(BAMBU_OPTS) \
  		../../../$< 2>&1 | tee ../../bambu-baseline-synth-log
- 
+
  .PHONY: synth-baseline
 @@ -84,6 +133,7 @@ $(ODIR)/bambu/optimized/forward_kernel.v $(ODIR)/bambu/optimized/simulate_forwar
  		--generate-tb=../../forward_kernel_test.xml \
@@ -134,7 +134,7 @@ index f6c72ff..3140e64 100644
  		--top-fname=forward_kernel \
 +                --memory-mapped-top \
  		../../../$< 2>&1 | tee ../../bambu-optimized-synth-log
- 
+
  .PHONY: synth-optimized
 @@ -100,4 +150,4 @@ clean:
  .PHONY: clean-bambu
