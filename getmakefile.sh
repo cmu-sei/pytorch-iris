@@ -30,7 +30,6 @@
 # DM23-0186
 
 wget -O Makefile https://github.com/pnnl/soda-opt/raw/main/docs/tutorials/pytorch/matmul_accel_gen/docker-version/Makefile
-patch Makefile < Makefile.patch
+patch -l Makefile < Makefile.patch
 sed -e '1,30d' Makefile > Makefile.tmp
 mv Makefile.tmp Makefile
-
