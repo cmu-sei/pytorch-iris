@@ -62,3 +62,17 @@ cd work/pytorch-iris/
 ./getmakefile.sh
 make synth-baseline
 ```
+
+For updating the Makefile patch. Makefile isn't version controlled, so this
+is a bit odd.
+```
+# get the soda opt version
+wget -O Makefile.orig https://github.com/pnnl/soda-opt/raw/main/docs/tutorials/pytorch/matmul_accel_gen/docker-version/Makefile
+# apply current patch
+./getmakefile.sh
+# edit Makefile to desired. Add the copyright so that it appears in the patch.
+diff -u Makefile.orig Makefile > Makefile.patch
+# edit the patch to change Makefile.orig to Makefile
+# run patch to see if you get what you want
+./getmakefile.sh
+```

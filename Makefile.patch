@@ -1,10 +1,7 @@
-diff --git a/Makefile b/Makefile
-index f6c72ff..3140e64 100644
---- a/Makefile
-+++ b/Makefile
-@@ -1,27 +1,65 @@
+--- Makefile	2023-09-08 14:55:32.956616750 -0400
++++ Makefile	2023-09-08 14:59:24.465249900 -0400
+@@ -1,35 +1,74 @@
 -# Compile Torch model to LLVM
-+#
 +# Copyright 2023 Carnegie Mellon University.
 +# MIT (SEI)
 +# Permission is hereby granted, free of charge, to any person obtaining a
@@ -33,7 +30,6 @@ index f6c72ff..3140e64 100644
 +# and unlimited distribution.  Please see Copyright notice for non-US
 +# Government use and distribution.
 +# DM23-0186
-+
 +
 +# makefile based on soda-opt pytorch examples
 +#FILE_PATH = mlir.py
@@ -81,7 +77,8 @@ index f6c72ff..3140e64 100644
 
  $(ODIR)/03-02_linalg_outlined.mlir: $(ODIR)/03-01_linalg_searched.mlir
  	soda-opt $< -o $@ -soda-outline-bambu-code -soda-extract-arguments-to-xml=using-bare-ptr
-@@ -29,7 +67,10 @@ $(ODIR)/03-02_linalg_outlined.mlir: $(ODIR)/03-01_linalg_searched.mlir
+-	mv forward_kernel_interface.xml  $(ODIR)/forward_kernel_interface.xml
++	cp forward_kernel_interface.xml  $(ODIR)/forward_kernel_interface.xml
  	mv forward_kernel_test.xml $(ODIR)/forward_kernel_test.xml
 
  $(ODIR)/03-03_linalg_isolated.mlir: $(ODIR)/03-02_linalg_outlined.mlir
@@ -93,17 +90,17 @@ index f6c72ff..3140e64 100644
 
  # =============================================================================
  # Rules specific to non-optimized Baseline
-@@ -39,22 +80,30 @@ $(ODIR)/04_llvm_baseline.mlir: $(ODIR)/03-03_linalg_isolated.mlir
+@@ -39,22 +78,30 @@
  $(ODIR)/05_llvm_baseline.ll: $(ODIR)/04_llvm_baseline.mlir
  	mlir-translate $< -o $@ --mlir-to-llvmir -opaque-pointers=0
 
 +# current version of bambu doesn't concurrently support
 +# --memory-mapped-top and --generate-tb, --simulate
 +BAMBU_OPTS=
-+#BAMBU_OPTS+= --memory-mapped-top
-+BAMBU_OPTS+= --generate-tb=../../forward_kernel_test.xml --interface-xml-filename=../../forward_kernel_interface.xml --simulate --simulator=VERILATOR
-+BAMBU_OPTS+= --no-clean
-+
++#BAMBU_OPTS+=--memory-mapped-top
++BAMBU_OPTS+=--generate-tb=../../forward_kernel_test.xml --interface-xml-filename=../../forward_kernel_interface.xml
++BAMBU_OPTS+=--simulate --simulator=VERILATOR
++#BAMBU_OPTS+=--no-clean
 +#BAMBU_OPTS+= --data-bus-bitsize=32 --addr-bus-bitsize=32
 +
  $(ODIR)/bambu/baseline/forward_kernel.v $(ODIR)/bambu/baseline/simulate_forward_kernel.sh : $(ODIR)/05_llvm_baseline.ll
@@ -128,7 +125,7 @@ index f6c72ff..3140e64 100644
  		../../../$< 2>&1 | tee ../../bambu-baseline-synth-log
 
  .PHONY: synth-baseline
-@@ -84,6 +133,7 @@ $(ODIR)/bambu/optimized/forward_kernel.v $(ODIR)/bambu/optimized/simulate_forwar
+@@ -84,6 +131,7 @@
  		--generate-tb=../../forward_kernel_test.xml \
  		--simulate --simulator=VERILATOR \
  		--top-fname=forward_kernel \
@@ -136,7 +133,7 @@ index f6c72ff..3140e64 100644
  		../../../$< 2>&1 | tee ../../bambu-optimized-synth-log
 
  .PHONY: synth-optimized
-@@ -100,4 +150,4 @@ clean:
+@@ -100,4 +148,4 @@
  .PHONY: clean-bambu
  clean-bambu:
  	test -f $(ODIR)/bambu/baseline/forward_kernel.v && \
