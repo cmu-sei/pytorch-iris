@@ -1,6 +1,6 @@
---- Makefile	2023-09-08 14:55:32.956616750 -0400
-+++ Makefile	2023-09-08 14:59:24.465249900 -0400
-@@ -1,35 +1,74 @@
+--- Makefile	2023-09-08 16:52:46.334146885 -0400
++++ Makefile	2023-09-08 16:59:48.929328833 -0400
+@@ -1,35 +1,79 @@
 -# Compile Torch model to LLVM
 +# Copyright 2023 Carnegie Mellon University.
 +# MIT (SEI)
@@ -67,18 +67,23 @@
  $(ODIR)/02_linalg.mlir: $(ODIR)/01_tosa.mlir $(SCRIPTS_DIR)/tosa_to_linalg.sh
  	$(SCRIPTS_DIR)/tosa_to_linalg.sh $< $@
 
++ifeq ($(FILE_PATH), torchscript.py)
++  SODA_OPTS=-convert-operation-to-soda="anchor-op=linalg.batch_matmul"
++endif
++ifeq ($(FILE_PATH), mlir.py)
++  SODA_OPTS=-convert-all-to-soda
++endif
++
  # Define here which operation to outline
 -$(ODIR)/03-01_linalg_searched.mlir: $(ODIR)/02_linalg.mlir
 -	soda-opt $< -o $@ -convert-operation-to-soda="anchor-op=linalg.batch_matmul"
 +$(ODIR)/03-01_linalg_searched.mlir: $(ODIR)/02_linalg.mlir
-+	soda-opt $< -o $@ -convert-operation-to-soda="anchor-op=linalg.batch_matmul"
-+#$(ODIR)/03-01_linalg_searched.mlir: $(ODIR)/02_linalg.mlir
-+#	soda-opt $< -o $@ -convert-all-to-soda
++	soda-opt $< -o $@ $(SODA_OPTS)
 
  $(ODIR)/03-02_linalg_outlined.mlir: $(ODIR)/03-01_linalg_searched.mlir
  	soda-opt $< -o $@ -soda-outline-bambu-code -soda-extract-arguments-to-xml=using-bare-ptr
 -	mv forward_kernel_interface.xml  $(ODIR)/forward_kernel_interface.xml
-+	cp forward_kernel_interface.xml  $(ODIR)/forward_kernel_interface.xml
++	cp fki_$(FILE_PATH:.py=.xml)  $(ODIR)/forward_kernel_interface.xml
  	mv forward_kernel_test.xml $(ODIR)/forward_kernel_test.xml
 
  $(ODIR)/03-03_linalg_isolated.mlir: $(ODIR)/03-02_linalg_outlined.mlir
@@ -90,15 +95,14 @@
 
  # =============================================================================
  # Rules specific to non-optimized Baseline
-@@ -39,22 +78,30 @@
+@@ -39,22 +83,29 @@
  $(ODIR)/05_llvm_baseline.ll: $(ODIR)/04_llvm_baseline.mlir
  	mlir-translate $< -o $@ --mlir-to-llvmir -opaque-pointers=0
 
-+# current version of bambu doesn't concurrently support
-+# --memory-mapped-top and --generate-tb, --simulate
 +BAMBU_OPTS=
-+#BAMBU_OPTS+=--memory-mapped-top
-+BAMBU_OPTS+=--generate-tb=../../forward_kernel_test.xml --interface-xml-filename=../../forward_kernel_interface.xml
++BAMBU_OPTS+=--memory-mapped-top
++BAMBU_OPTS+=--generate-tb=../../forward_kernel_test.xml
++BAMBU_OPTS+=--interface-xml-filename=../../forward_kernel_interface.xml
 +BAMBU_OPTS+=--simulate --simulator=VERILATOR
 +#BAMBU_OPTS+=--no-clean
 +#BAMBU_OPTS+= --data-bus-bitsize=32 --addr-bus-bitsize=32
@@ -125,15 +129,38 @@
  		../../../$< 2>&1 | tee ../../bambu-baseline-synth-log
 
  .PHONY: synth-baseline
-@@ -84,6 +131,7 @@
- 		--generate-tb=../../forward_kernel_test.xml \
- 		--simulate --simulator=VERILATOR \
+@@ -68,22 +119,26 @@
+ $(ODIR)/05_llvm_optimized.ll: $(ODIR)/04_llvm_optimized.mlir
+ 	mlir-translate $< -o $@ --mlir-to-llvmir -opaque-pointers=0
+
++BAMBU_OPT_OPTS=
++BAMBU_OPT_OPTS+=--memory-mapped-top
++BAMBU_OPT_OPTS+=--generate-tb=../../forward_kernel_test.xml
++BAMBU_OPT_OPTS+=--interface-xml-filename=../../forward_kernel_interface.xml
++
+ $(ODIR)/bambu/optimized/forward_kernel.v $(ODIR)/bambu/optimized/simulate_forward_kernel.sh : $(ODIR)/05_llvm_optimized.ll
+ 	test -d $(ODIR)/bambu/optimized || mkdir -p $(ODIR)/bambu/optimized; \
+ 	cd $(ODIR)/bambu/optimized; \
+ 	bambu \
+ 		-v3 --print-dot \
+ 		-lm --soft-float \
+-		--compiler=I386_CLANG12 \
++		--compiler=I386_CLANG16 \
+ 		--device=xc7z020-1clg484-VVD \
+-		--clock-period=5 --no-iob \
++		--clock-period=5 \
+ 		--experimental-setup=BAMBU-BALANCED-MP \
+ 		--channels-number=2 \
+ 		--memory-allocation-policy=ALL_BRAM \
+ 		--disable-function-proxy \
+-		--generate-tb=../../forward_kernel_test.xml \
+-		--simulate --simulator=VERILATOR \
  		--top-fname=forward_kernel \
-+                --memory-mapped-top \
++                $(BAMBU_OPT_OPTS) \
  		../../../$< 2>&1 | tee ../../bambu-optimized-synth-log
 
  .PHONY: synth-optimized
-@@ -100,4 +148,4 @@
+@@ -100,4 +155,4 @@
  .PHONY: clean-bambu
  clean-bambu:
  	test -f $(ODIR)/bambu/baseline/forward_kernel.v && \

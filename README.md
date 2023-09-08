@@ -64,7 +64,7 @@ make synth-baseline
 ```
 
 For updating the Makefile patch. Makefile isn't version controlled, so this
-is a bit odd.
+is a bit odd. For minor changes directly edit Makefile.patch.
 ```
 # get the soda opt version
 wget -O Makefile.orig https://github.com/pnnl/soda-opt/raw/main/docs/tutorials/pytorch/matmul_accel_gen/docker-version/Makefile
