@@ -51,17 +51,6 @@ python infer.py
 
 ![Neural network](./iris.png)
 
-# for use with soda-opt
-```
-git clone --recursive git@github.com:cmu-sei/soda-opt-docker.git
-cd soda-opt-docker
-# see README.md for building and running container
-# in the container
-cd work/pytorch-iris/
-./getmake.sh
-make synth-baseline
-```
-
 # for use with hls4ml
 ```
 git clone git@github.com:cmu-sei/hls4ml-docker.git
