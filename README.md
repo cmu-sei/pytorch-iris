@@ -64,8 +64,8 @@ make synth-baseline
 
 # for use with hls4ml
 ```
-git clone git@github.com:cmu-sei/esp-docker.git
-cd esp-docker
+git clone git@github.com:cmu-sei/hls4ml-docker.git
+cd hls4ml-docker
 # see README.md for building and running container
 # in the container
 cd work/pytorch-iris/
