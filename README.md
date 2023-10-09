@@ -54,8 +54,11 @@ python infer.py
 # for use with hls4ml
 ```
 git clone git@github.com:cmu-sei/hls4ml-docker.git
-cd hls4ml-docker
-# see README.md for building and running container
+cd hls4ml-docker/work
+git clone git@github.com:cmu-sei/pytorch-iris.git
+git checkout hls4ml
+
+# see hls4ml-docker README.md for building and running container
 # in the hls4ml container
 cd work/pytorch-iris/
 export PYTHONPATH=`pwd`
