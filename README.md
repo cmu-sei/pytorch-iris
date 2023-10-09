@@ -67,11 +67,15 @@ make synth-baseline
 git clone git@github.com:cmu-sei/hls4ml-docker.git
 cd hls4ml-docker
 # see README.md for building and running container
-# in the container
+# in the hls4ml container
 cd work/pytorch-iris/
 export PYTHONPATH=`pwd`
 python train.py
 python ./scripts/build_hls4ml_model.py
+# on host
+cp -r work/pytorch-iris /path/to/esp-docker/work
+# in the esp container
 python ./scripts/create_esp_accelerator.py
-# now the accelerator can be added to the esp flow.
+# now the accelerator can be added to the esp flow in the usual way.
+# copy soc directory, make iris_hls4ml-hls, make esp-xconfig
 ```
