@@ -38,6 +38,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 
 import torch
+import torch.nn.functional as F
 import torch.nn as nn
 from torch.ao.quantization import get_default_qat_qconfig_mapping
 import torch.ao.quantization.quantize_fx as quantize_fx
@@ -54,9 +55,9 @@ class Model(nn.Module):
         self.softmax = nn.Softmax(dim=1)
 
     def forward(self, x):
-        x = self.relu(self.layer1(x))
-        x = self.relu(self.layer2(x))
-        x = self.softmax(x)
+        x = F.relu(self.layer1(x))
+        x = F.relu(self.layer2(x))
+        x = F.softmax(x,dim=1)
         return x
 
 def check_logits(m):
