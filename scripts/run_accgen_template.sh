@@ -30,7 +30,7 @@
 # DM23-0186
 
 ./tools/accgen/accgen.sh << EOF
-pytorch-iris
+iris
 h
 
 HLS4ML_PATH

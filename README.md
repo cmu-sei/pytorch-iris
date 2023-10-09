@@ -77,5 +77,5 @@ cp -r work/pytorch-iris /path/to/esp-docker/work
 # in the esp container
 python ./scripts/create_esp_accelerator.py
 # now the accelerator can be added to the esp flow in the usual way.
-# copy soc directory, make pytorch-iris_hls4ml-hls, make esp-xconfig
+# copy soc directory, make iris_hls4ml-hls, make esp-xconfig
 ```
