@@ -77,7 +77,7 @@ isPlottingRocCurve = False
 if isPlottingRocCurve:
    m.plot_roc_curve(model,X_test,y_test)
 
-# hls4ml model 
+# hls4ml model
 # configuration
 isUsingCustomPrecision = False
 if isUsingCustomPrecision:
@@ -109,14 +109,15 @@ hls_model = hls4ml.converters.convert_from_pytorch_model(
    model,
    input_shape=[[None,4]],
    hls_config=config,
-   output_dir=output_dir, part='xcvu9p-flga2104-2-i',
-   input_data_tb=data_files[0], 
+   output_dir=output_dir, part='xcvu9p-flga2104-2-e',
+   input_data_tb=data_files[0],
    output_data_tb=data_files[1],
 )
 # model architecture
 isSavingModelArchitecture = False
 if isSavingModelArchitecture:
-   hls4ml.utils.plot_model(hls_model, show_shapes=True, show_precision=True, to_file="./data_flow.png")
+   hls4ml.utils.plot_model(hls_model, show_shapes=True,
+                           show_precision=True, to_file="./data_flow.png")
 # compilation
 hls_model.compile()
 # predictions
@@ -124,7 +125,7 @@ X_test_hls = np.ascontiguousarray(X_test)
 y_hls = hls_model.predict(X_test_hls)
 # accuracy
 print("hls4ml Model Accuracy: {}".format(
-   accuracy_score(y_test, np.argmax(y_hls, axis=1))))
+    accuracy_score(y_test, np.argmax(y_hls, axis=1))))
 
 isPrintingPredictions = False
 if isPrintingPredictions:
@@ -133,6 +134,7 @@ if isPrintingPredictions:
 
 print("Running Vivado HLS C Simulation")
 cmd = \
-  "cd " + output_dir + "; " + \
-  "vivado_hls -f build_prj.tcl 'csim=1 synth=0 cosim=0 validation=0'"
+    "export LIBRARY_PATH=/usr/lib/x86_64-linux-gnu; " + \
+    "cd " + output_dir + "; " + \
+    "vivado_hls -f build_prj.tcl 'csim=1 synth=1 cosim=1 validation=1'"
 os.system(cmd)

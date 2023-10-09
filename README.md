@@ -53,12 +53,25 @@ python infer.py
 
 # for use with soda-opt
 ```
-git clone git clone --recursive git@github.com:cmu-sei/soda-opt-docker.git
+git clone --recursive git@github.com:cmu-sei/soda-opt-docker.git
 cd soda-opt-docker
-docker build --rm --pull -f ./Dockerfile -t soda-opt:dev-panda .
-docker run --rm -it --network=host --privileged -e DISPLAY=$DISPLAY -e UID=$(id -u) -e GID=$(id -g) -v `pwd`/env:/home/soda-opt-user/env:rw -v `pwd`/work:/home/soda-opt-user/work soda-opt:dev-panda
+# see README.md for building and running container
 # in the container
 cd work/pytorch-iris/
 ./getmake.sh
 make synth-baseline
+```
+
+# for use with hls4ml
+```
+git clone git@github.com:cmu-sei/esp-docker.git
+cd esp-docker
+# see README.md for building and running container
+# in the container
+cd work/pytorch-iris/
+export PYTHONPATH=`pwd`
+python train.py
+python ./scripts/build_hls4ml_model.py
+python ./scripts/create_esp_accelerator.py
+# now the accelerator can be added to the esp flow.
 ```

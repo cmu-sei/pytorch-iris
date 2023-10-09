@@ -27,7 +27,6 @@
 # Government use and distribution.
 # DM23-0186
 
-
 import copy
 import model as m
 import torch
@@ -59,7 +58,7 @@ def main():
     if verbose:
         m.vis_data(X,y,names,feature_names)
     X_train,X_test,y_train,y_test = m.split_data(X,y)
-    
+
     # make an output directory
     data_dir = "data"
     if not os.path.exists(data_dir):
