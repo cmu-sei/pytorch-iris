@@ -134,7 +134,6 @@ if isPrintingPredictions:
 
 print("Running Vivado HLS C Simulation")
 cmd = \
-    "export LIBRARY_PATH=/usr/lib/x86_64-linux-gnu; " + \
     "cd " + output_dir + "; " + \
     "vivado_hls -f build_prj.tcl 'csim=1 synth=1 cosim=1 validation=1'"
 os.system(cmd)
