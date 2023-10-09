@@ -102,9 +102,9 @@ index f6c72ff..3140e64 100644
 +BAMBU_OPTS=
 +#BAMBU_OPTS+=--memory-mapped-top
 +BAMBU_OPTS+= --generate-tb=../../forward_kernel_test.xml --simulate --simulator=VERILATOR
-+BAMBU_OPTS+=--no-clean
++BAMBU_OPTS+= --no-clean
 +
-+#BAMBU_OPTS+=--data-bus-bitsize=32 --addr-bus-bitsize=32
++#BAMBU_OPTS+= --data-bus-bitsize=32 --addr-bus-bitsize=32
 +
  $(ODIR)/bambu/baseline/forward_kernel.v $(ODIR)/bambu/baseline/simulate_forward_kernel.sh : $(ODIR)/05_llvm_baseline.ll
  	test -d $(ODIR)/bambu/baseline || mkdir -p $(ODIR)/bambu/baseline; \
