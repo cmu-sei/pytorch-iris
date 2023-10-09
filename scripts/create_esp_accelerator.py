@@ -58,7 +58,7 @@ os.system(run_script_path)
 
 # modify espacc.cc to use new hls4ml API
 espacc_path = os.path.join(ESP_path,
-                           "accelerators/hls4ml/iris_hls4ml/hw/src/espacc.cc")
+                           "accelerators/hls4ml/pytorch-iris_hls4ml/hw/src/espacc.cc")
 line_modifications = [
   ["unsigned short size_in1, size_out1;", "//"],
   ["myproject(_inbuff, _outbuff, size_in1, size_out1);",
