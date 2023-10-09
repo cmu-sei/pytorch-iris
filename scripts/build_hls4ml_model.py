@@ -8,6 +8,13 @@ import numpy as np
 import hls4ml
 import os
 import shutil
+import subprocess
+
+# move to top level of git repository
+Iris_path = \
+  subprocess.check_output("git rev-parse --show-toplevel",shell=True). \
+  strip().decode('utf-8')
+os.chdir(Iris_path)
 
 # delete previous model
 output_dir = "model/hls4ml_project"
